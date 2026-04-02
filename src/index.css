@@ -1,1 +1,43 @@
 @import "tailwindcss";
+@theme {
+  /* Primary — Gold */
+  --color-gold: #F59E0B;
+  --color-gold-foreground: #0D1117;
+
+  /* Backgrounds — Navy */
+  --color-navy: #0D1117;
+  --color-navy-card: #161B22;
+  --color-navy-elevated: #21262D;
+
+  /* Border */
+  --color-navy-border: #30363D;
+
+  /* Text */
+  --color-text-base: #E6EDF3;
+  --color-text-muted: #7D8590;
+
+  /* Status colors */
+  --color-success: #3FB950;        /* Active, available, returned */
+  --color-success-foreground: #0D1117;
+
+  --color-danger: #F85149;         /* Overdue, delete, errors */
+  --color-danger-foreground: #ffffff;
+
+  --color-info: #58A6FF;           /* Borrowed, informational */
+  --color-info-foreground: #0D1117;
+
+  --color-warning: #D29922;        /* Pending, expiring soon */
+  --color-warning-foreground: #0D1117;
+}
+
+/**
+class                             color                          use for
+bg-gold                       #F59E0B                     Buttons,highlights, active nav
+bg-navy                         #0D1117                     Page background
+bg-navy-card                  #161B22                         Cards, tables
+bg-navy-elevated              #21262D                         Inputs, hover states
+text-success                  #3FB950                     Active, available, returned
+text-danger                   #F85149                         Overdue, delete, errors
+text-info                     #58A6FF                         Borrowed, info states
+text-warning                #D29922                             Pending, expiring soon
+/

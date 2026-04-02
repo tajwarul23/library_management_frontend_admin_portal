@@ -1,0 +1,310 @@
+
+<style>
+  .ap-root { display: flex; height: 600px; background: #0D1117; color: #E6EDF3; font-family: var(--font-sans); overflow: hidden; border-radius: var(--border-radius-lg); border: 0.5px solid #30363D; }
+  .ap-sidebar { width: 200px; background: #161B22; border-right: 0.5px solid #30363D; display: flex; flex-direction: column; flex-shrink: 0; }
+  .ap-logo { padding: 16px; border-bottom: 0.5px solid #30363D; display: flex; align-items: center; gap: 8px; }
+  .ap-logo-icon { width: 28px; height: 28px; background: #F59E0B; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #0D1117; font-weight: 500; flex-shrink: 0; }
+  .ap-logo-text { font-size: 12px; font-weight: 500; line-height: 1.3; }
+  .ap-logo-sub { font-size: 10px; color: #7D8590; }
+  .ap-nav { flex: 1; padding: 8px; overflow-y: auto; }
+  .ap-nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; color: #7D8590; margin-bottom: 2px; transition: all 0.1s; }
+  .ap-nav-item:hover { background: #21262D; color: #E6EDF3; }
+  .ap-nav-item.active { background: #F59E0B18; color: #F59E0B; border-left: 2px solid #F59E0B; }
+  .ap-nav-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
+  .ap-main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .ap-topbar { height: 48px; border-bottom: 0.5px solid #30363D; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; flex-shrink: 0; background: #161B22; }
+  .ap-topbar-title { font-size: 14px; font-weight: 500; }
+  .ap-topbar-right { display: flex; align-items: center; gap: 12px; }
+  .ap-avatar { width: 28px; height: 28px; border-radius: 50%; background: #F59E0B; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; color: #0D1117; }
+  .ap-content { flex: 1; overflow-y: auto; padding: 16px 20px; }
+  .ap-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+  .ap-stat { background: #161B22; border: 0.5px solid #30363D; border-radius: 8px; padding: 12px; }
+  .ap-stat-label { font-size: 10px; color: #7D8590; margin-bottom: 6px; letter-spacing: 0.05em; }
+  .ap-stat-value { font-size: 22px; font-weight: 500; line-height: 1; margin-bottom: 4px; }
+  .ap-stat-delta { font-size: 10px; color: #7D8590; }
+  .ap-section { background: #161B22; border: 0.5px solid #30363D; border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  .ap-section-header { padding: 10px 14px; border-bottom: 0.5px solid #30363D; display: flex; justify-content: space-between; align-items: center; }
+  .ap-section-title { font-size: 12px; font-weight: 500; }
+  .ap-btn { padding: 5px 12px; border-radius: 6px; font-size: 11px; border: none; cursor: pointer; font-family: var(--font-sans); font-weight: 500; }
+  .ap-btn-primary { background: #F59E0B; color: #0D1117; }
+  .ap-btn-outline { background: transparent; color: #7D8590; border: 0.5px solid #30363D; }
+  .ap-btn-danger { background: #F8514920; color: #F85149; border: none; }
+  .ap-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .ap-table th { padding: 8px 14px; text-align: left; font-size: 10px; color: #7D8590; font-weight: 500; letter-spacing: 0.06em; border-bottom: 0.5px solid #30363D; }
+  .ap-table td { padding: 9px 14px; border-bottom: 0.5px solid #21262D; color: #E6EDF3; }
+  .ap-table tr:last-child td { border-bottom: none; }
+  .ap-table tr:hover td { background: #21262D30; }
+  .ap-badge { padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 500; display: inline-block; }
+  .badge-success { background: #3FB95020; color: #3FB950; }
+  .badge-danger { background: #F8514920; color: #F85149; }
+  .badge-warning { background: #D2992220; color: #D29922; }
+  .badge-info { background: #58A6FF20; color: #58A6FF; }
+  .ap-search { background: #21262D; border: 0.5px solid #30363D; color: #E6EDF3; padding: 5px 10px; border-radius: 6px; font-size: 11px; font-family: var(--font-sans); outline: none; width: 160px; }
+  .ap-page { display: none; }
+  .ap-page.active { display: block; }
+  .ap-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px; }
+  .ap-input { background: #21262D; border: 0.5px solid #30363D; color: #E6EDF3; padding: 7px 10px; border-radius: 6px; font-size: 12px; font-family: var(--font-sans); outline: none; width: 100%; box-sizing: border-box; }
+  .ap-label { font-size: 10px; color: #7D8590; margin-bottom: 4px; display: block; }
+</style>
+
+<div class="ap-root">
+  <div class="ap-sidebar">
+    <div class="ap-logo">
+      <div class="ap-logo-icon">S</div>
+      <div>
+        <div class="ap-logo-text">SEC Library</div>
+        <div class="ap-logo-sub">Admin Portal</div>
+      </div>
+    </div>
+    <nav class="ap-nav">
+      <div class="ap-nav-item active" onclick="switchPage('dashboard', this)"><div class="ap-nav-dot"></div>Dashboard</div>
+      <div class="ap-nav-item" onclick="switchPage('books', this)"><div class="ap-nav-dot"></div>Manage Books</div>
+      <div class="ap-nav-item" onclick="switchPage('students', this)"><div class="ap-nav-dot"></div>Manage Students</div>
+      <div class="ap-nav-item" onclick="switchPage('reservations', this)"><div class="ap-nav-dot"></div>Reservations</div>
+      <div class="ap-nav-item" onclick="switchPage('issued', this)"><div class="ap-nav-dot"></div>Issued Books</div>
+      <div class="ap-nav-item" onclick="switchPage('return', this)"><div class="ap-nav-dot"></div>Return Book</div>
+      <div class="ap-nav-item" onclick="switchPage('session', this)"><div class="ap-nav-dot"></div>Session Wise</div>
+      <div class="ap-nav-item" onclick="switchPage('department', this)"><div class="ap-nav-dot"></div>Department Wise</div>
+    </nav>
+  </div>
+
+  <div class="ap-main">
+    <div class="ap-topbar">
+      <div class="ap-topbar-title" id="page-title">Dashboard</div>
+      <div class="ap-topbar-right">
+        <div style="font-size:11px;color:#7D8590;">Admin</div>
+        <div class="ap-avatar">A</div>
+      </div>
+    </div>
+
+    <div class="ap-content">
+
+      <!-- Dashboard -->
+      <div class="ap-page active" id="page-dashboard">
+        <div class="ap-stats">
+          <div class="ap-stat">
+            <div class="ap-stat-label">TOTAL BOOKS</div>
+            <div class="ap-stat-value" style="color:#F59E0B;">1,240</div>
+            <div class="ap-stat-delta">+12 this week</div>
+          </div>
+          <div class="ap-stat">
+            <div class="ap-stat-label">STUDENTS</div>
+            <div class="ap-stat-value" style="color:#3FB950;">386</div>
+            <div class="ap-stat-delta">+5 today</div>
+          </div>
+          <div class="ap-stat">
+            <div class="ap-stat-label">RESERVATIONS</div>
+            <div class="ap-stat-value" style="color:#58A6FF;">43</div>
+            <div class="ap-stat-delta">8 expiring soon</div>
+          </div>
+          <div class="ap-stat">
+            <div class="ap-stat-label">OVERDUE</div>
+            <div class="ap-stat-value" style="color:#F85149;">7</div>
+            <div class="ap-stat-delta">Action needed</div>
+          </div>
+        </div>
+        <div class="ap-section">
+          <div class="ap-section-header">
+            <div class="ap-stat-label" style="margin:0;">RECENT ACTIVITY</div>
+          </div>
+          <table class="ap-table">
+            <thead><tr><th>Student</th><th>Book</th><th>Action</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td>Arif Hassan</td><td>Clean Code</td><td>Issued</td><td>Mar 13</td><td><span class="ap-badge badge-info">Borrowed</span></td></tr>
+              <tr><td>Nadia Islam</td><td>Algorithms</td><td>Reserved</td><td>Mar 12</td><td><span class="ap-badge badge-warning">Pending</span></td></tr>
+              <tr><td>Tanvir Ahmed</td><td>Design Patterns</td><td>Returned</td><td>Mar 11</td><td><span class="ap-badge badge-success">Returned</span></td></tr>
+              <tr><td>Rakib Hossain</td><td>Database Systems</td><td>Issued</td><td>Mar 10</td><td><span class="ap-badge badge-danger">Overdue</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Books -->
+      <div class="ap-page" id="page-books">
+        <div class="ap-section">
+          <div class="ap-section-header">
+            <input class="ap-search" placeholder="Search books..." />
+            <button class="ap-btn ap-btn-primary">+ Add Book</button>
+          </div>
+          <table class="ap-table">
+            <thead><tr><th>Title</th><th>Author</th><th>Category</th><th>Total</th><th>Available</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td>Clean Code</td><td>Robert C. Martin</td><td>Programming</td><td>5</td><td style="color:#3FB950;font-weight:500;">3</td><td><button class="ap-btn ap-btn-outline" style="margin-right:4px;">Edit</button><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+              <tr><td>The Pragmatic Programmer</td><td>Hunt & Thomas</td><td>Programming</td><td>3</td><td style="color:#F85149;font-weight:500;">0</td><td><button class="ap-btn ap-btn-outline" style="margin-right:4px;">Edit</button><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+              <tr><td>Design Patterns</td><td>Gang of Four</td><td>Software Eng.</td><td>4</td><td style="color:#3FB950;font-weight:500;">2</td><td><button class="ap-btn ap-btn-outline" style="margin-right:4px;">Edit</button><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+              <tr><td>Algorithms (CLRS)</td><td>Cormen et al.</td><td>CS Theory</td><td>6</td><td style="color:#3FB950;font-weight:500;">5</td><td><button class="ap-btn ap-btn-outline" style="margin-right:4px;">Edit</button><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Students -->
+      <div class="ap-page" id="page-students">
+        <div class="ap-section">
+          <div class="ap-section-header">
+            <input class="ap-search" placeholder="Search students..." />
+            <button class="ap-btn ap-btn-primary">+ Add Student</button>
+          </div>
+          <table class="ap-table">
+            <thead><tr><th>Name</th><th>Student ID</th><th>Dept</th><th>Session</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td>Arif Hassan</td><td style="color:#F59E0B;">SEC-2021-001</td><td>CSE</td><td>2021-22</td><td><span class="ap-badge badge-success">Active</span></td><td><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+              <tr><td>Nadia Islam</td><td style="color:#F59E0B;">SEC-2021-042</td><td>EEE</td><td>2021-22</td><td><span class="ap-badge badge-success">Active</span></td><td><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+              <tr><td>Tanvir Ahmed</td><td style="color:#F59E0B;">SEC-2022-018</td><td>CSE</td><td>2022-23</td><td><span class="ap-badge badge-success">Active</span></td><td><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+              <tr><td>Sumaiya Begum</td><td style="color:#F59E0B;">SEC-2022-067</td><td>Civil</td><td>2022-23</td><td><span class="ap-badge badge-danger">Suspended</span></td><td><button class="ap-btn ap-btn-danger">Delete</button></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Reservations -->
+      <div class="ap-page" id="page-reservations">
+        <div class="ap-section">
+          <div class="ap-section-header">
+            <div class="ap-stat-label" style="margin:0;">ALL RESERVATIONS</div>
+            <div style="display:flex;gap:6px;">
+              <span class="ap-badge badge-warning" style="cursor:pointer;padding:4px 10px;">Pending</span>
+              <span class="ap-badge badge-info" style="cursor:pointer;padding:4px 10px;">Issued</span>
+              <span class="ap-badge badge-danger" style="cursor:pointer;padding:4px 10px;">Expired</span>
+            </div>
+          </div>
+          <table class="ap-table">
+            <thead><tr><th>Student</th><th>Book</th><th>Reserved</th><th>Expires</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td>Arif Hassan</td><td>Clean Code</td><td>Mar 10</td><td>Mar 13</td><td><span class="ap-badge badge-warning">Pending</span></td><td><button class="ap-btn ap-btn-primary" style="margin-right:4px;">Issue</button><button class="ap-btn ap-btn-danger">Cancel</button></td></tr>
+              <tr><td>Nadia Islam</td><td>Algorithms</td><td>Mar 12</td><td>Mar 15</td><td><span class="ap-badge badge-warning">Pending</span></td><td><button class="ap-btn ap-btn-primary" style="margin-right:4px;">Issue</button><button class="ap-btn ap-btn-danger">Cancel</button></td></tr>
+              <tr><td>Tanvir Ahmed</td><td>Design Patterns</td><td>Mar 08</td><td>Mar 11</td><td><span class="ap-badge badge-danger">Expired</span></td><td></td></tr>
+              <tr><td>Rakib Hossain</td><td>Database Systems</td><td>Mar 13</td><td>Mar 16</td><td><span class="ap-badge badge-info">Issued</span></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Issued -->
+      <div class="ap-page" id="page-issued">
+        <div class="ap-section">
+          <div class="ap-section-header">
+            <div class="ap-stat-label" style="margin:0;">ISSUED BOOKS</div>
+            <input class="ap-search" placeholder="Search..." />
+          </div>
+          <table class="ap-table">
+            <thead><tr><th>Issue ID</th><th>Student</th><th>Book</th><th>Issued</th><th>Due Date</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr><td style="color:#F59E0B;">ISS-001</td><td>Arif Hassan</td><td>Clean Code</td><td>Mar 01</td><td>Mar 15</td><td><span class="ap-badge badge-info">Borrowed</span></td></tr>
+              <tr><td style="color:#F59E0B;">ISS-002</td><td>Nadia Islam</td><td>Pragmatic Prog.</td><td>Feb 20</td><td style="color:#F85149;">Mar 06</td><td><span class="ap-badge badge-danger">Overdue</span></td></tr>
+              <tr><td style="color:#F59E0B;">ISS-003</td><td>Tanvir Ahmed</td><td>Algorithms</td><td>Mar 05</td><td>Mar 19</td><td><span class="ap-badge badge-info">Borrowed</span></td></tr>
+              <tr><td style="color:#F59E0B;">ISS-004</td><td>Sumaiya Begum</td><td>Design Patterns</td><td>Feb 15</td><td>Mar 01</td><td><span class="ap-badge badge-success">Returned</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Return -->
+      <div class="ap-page" id="page-return">
+        <div class="ap-section" style="max-width:420px;">
+          <div class="ap-section-header">
+            <div class="ap-stat-label" style="margin:0;">RETURN A BOOK</div>
+          </div>
+          <div style="padding:16px;display:flex;flex-direction:column;gap:12px;">
+            <div>
+              <label class="ap-label">Issue ID</label>
+              <input class="ap-input" placeholder="e.g. ISS-1742134800000-742" />
+            </div>
+            <button class="ap-btn ap-btn-primary" style="align-self:flex-start;padding:7px 20px;font-size:12px;">Process Return</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session -->
+      <div class="ap-page" id="page-session">
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="ap-btn ap-btn-primary" onclick="filterSession('2021-22',this)">2021-22</button>
+          <button class="ap-btn ap-btn-outline" onclick="filterSession('2022-23',this)">2022-23</button>
+          <button class="ap-btn ap-btn-outline" onclick="filterSession('2023-24',this)">2023-24</button>
+          <button class="ap-btn ap-btn-outline" onclick="filterSession('2024-25',this)">2024-25</button>
+        </div>
+        <div class="ap-section">
+          <div class="ap-section-header">
+            <div class="ap-stat-label" style="margin:0;" id="session-label">SESSION 2021-22</div>
+            <div style="font-size:11px;color:#7D8590;" id="session-count">2 students</div>
+          </div>
+          <table class="ap-table" id="session-table">
+            <thead><tr><th>Name</th><th>Student ID</th><th>Department</th><th>Status</th></tr></thead>
+            <tbody id="session-body">
+              <tr><td>Arif Hassan</td><td style="color:#F59E0B;">SEC-2021-001</td><td>CSE</td><td><span class="ap-badge badge-success">Active</span></td></tr>
+              <tr><td>Nadia Islam</td><td style="color:#F59E0B;">SEC-2021-042</td><td>EEE</td><td><span class="ap-badge badge-success">Active</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Department -->
+      <div class="ap-page" id="page-department">
+        <div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">
+          <button class="ap-btn ap-btn-primary" onclick="filterDept('CSE',this)">CSE</button>
+          <button class="ap-btn ap-btn-outline" onclick="filterDept('EEE',this)">EEE</button>
+          <button class="ap-btn ap-btn-outline" onclick="filterDept('Civil',this)">Civil</button>
+          <button class="ap-btn ap-btn-outline" onclick="filterDept('Mechanical',this)">Mechanical</button>
+        </div>
+        <div class="ap-section">
+          <div class="ap-section-header">
+            <div class="ap-stat-label" style="margin:0;" id="dept-label">DEPARTMENT OF CSE</div>
+            <div style="font-size:11px;color:#7D8590;" id="dept-count">2 students</div>
+          </div>
+          <table class="ap-table">
+            <thead><tr><th>Name</th><th>Student ID</th><th>Session</th><th>Status</th></tr></thead>
+            <tbody id="dept-body">
+              <tr><td>Arif Hassan</td><td style="color:#F59E0B;">SEC-2021-001</td><td>2021-22</td><td><span class="ap-badge badge-success">Active</span></td></tr>
+              <tr><td>Tanvir Ahmed</td><td style="color:#F59E0B;">SEC-2022-018</td><td>2022-23</td><td><span class="ap-badge badge-success">Active</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const pages = { dashboard:'Dashboard', books:'Manage Books', students:'Manage Students', reservations:'Reservations', issued:'Issued Books', return:'Return Book', session:'Session Wise', department:'Department Wise' };
+
+function switchPage(id, el) {
+  document.querySelectorAll('.ap-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ap-nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('page-title').textContent = pages[id];
+}
+
+const sessionData = {
+  '2021-22': [{name:'Arif Hassan',id:'SEC-2021-001',dept:'CSE',status:'Active',cls:'badge-success'},{name:'Nadia Islam',id:'SEC-2021-042',dept:'EEE',status:'Active',cls:'badge-success'}],
+  '2022-23': [{name:'Tanvir Ahmed',id:'SEC-2022-018',dept:'CSE',status:'Active',cls:'badge-success'},{name:'Sumaiya Begum',id:'SEC-2022-067',dept:'Civil',status:'Suspended',cls:'badge-danger'}],
+  '2023-24': [{name:'Rakib Hossain',id:'SEC-2023-003',dept:'Mechanical',status:'Active',cls:'badge-success'}],
+  '2024-25': []
+};
+
+function filterSession(s, el) {
+  document.querySelectorAll('#page-session .ap-btn').forEach(b => { b.className = 'ap-btn ap-btn-outline'; });
+  el.className = 'ap-btn ap-btn-primary';
+  document.getElementById('session-label').textContent = 'SESSION ' + s;
+  const data = sessionData[s] || [];
+  document.getElementById('session-count').textContent = data.length + ' students';
+  document.getElementById('session-body').innerHTML = data.length ? data.map(d => `<tr><td>${d.name}</td><td style="color:#F59E0B;">${d.id}</td><td>${d.dept}</td><td><span class="ap-badge ${d.cls}">${d.status}</span></td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:#7D8590;padding:20px;">No students found</td></tr>';
+}
+
+const deptData = {
+  'CSE': [{name:'Arif Hassan',id:'SEC-2021-001',session:'2021-22',status:'Active',cls:'badge-success'},{name:'Tanvir Ahmed',id:'SEC-2022-018',session:'2022-23',status:'Active',cls:'badge-success'}],
+  'EEE': [{name:'Nadia Islam',id:'SEC-2021-042',session:'2021-22',status:'Active',cls:'badge-success'}],
+  'Civil': [{name:'Sumaiya Begum',id:'SEC-2022-067',session:'2022-23',status:'Suspended',cls:'badge-danger'}],
+  'Mechanical': [{name:'Rakib Hossain',id:'SEC-2023-003',session:'2023-24',status:'Active',cls:'badge-success'}]
+};
+
+function filterDept(d, el) {
+  document.querySelectorAll('#page-department .ap-btn').forEach(b => { b.className = 'ap-btn ap-btn-outline'; });
+  el.className = 'ap-btn ap-btn-primary';
+  document.getElementById('dept-label').textContent = 'DEPARTMENT OF ' + d;
+  const data = deptData[d] || [];
+  document.getElementById('dept-count').textContent = data.length + ' students';
+  document.getElementById('dept-body').innerHTML = data.length ? data.map(s => `<tr><td>${s.name}</td><td style="color:#F59E0B;">${s.id}</td><td>${s.session}</td><td><span class="ap-badge ${s.cls}">${s.status}</span></td></tr>`).join('') : '<tr><td colspan="4" style="text-align:center;color:#7D8590;padding:20px;">No students found</td></tr>';
+}
+</script>
