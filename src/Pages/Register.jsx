@@ -23,7 +23,6 @@ const Register = () => {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm({ resolver: zodResolver(schema), mode: "onChange" });
