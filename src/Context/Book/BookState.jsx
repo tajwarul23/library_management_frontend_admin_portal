@@ -43,7 +43,7 @@ const BookState = ({ children }) => {
     try {
       setLoading(true);
       const { data } = await axios.put(
-        `${BASE}/admin/book/update/${bookId}`,
+        `${BASE}/admin/updateBook/${bookId}`,
         updates,
         authHeaders(),
       );
@@ -64,7 +64,7 @@ const BookState = ({ children }) => {
     try {
       setLoading(true);
       const { data } = await axios.delete(
-        `${BASE}/admin/book/delete/${bookId}`,
+        `${BASE}/admin/deleteBook/${bookId}`,
         authHeaders(),
       );
       setBooks((prev) => prev.filter((b) => b._id !== bookId));
