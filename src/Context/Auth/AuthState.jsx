@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { AuthContext } from "../AppContext";
+import { useEffect } from "react";
 
 const BASE = "http://localhost:5000/api";
 
@@ -9,6 +10,17 @@ const AuthState = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [token, setToken] = useState();
+
+  //-------------------USE_EFFECT----------------------------------
+  useEffect(() => {
+  const storedToken = localStorage.getItem("token");
+
+  if (storedToken) {
+    setToken(storedToken);
+    setAdmin({ token: storedToken }); // temporary until getProfile
+    getProfile(); // fetch real user
+  }
+}, []);
 
   // ── Register ──────────────────────────────────────────
   const registerAdmin = async (name, email, password) => {
@@ -38,15 +50,18 @@ const AuthState = ({ children }) => {
     try {
       setLoading(true);
       const { data } = await axios.post(
-        `${BASE}/auth/login`,
+        `${BASE}/auth/admin/login`,
         { email, password },
         { withCredentials: true },
       );
+      console.log("Login Response", data);
+      
       localStorage.setItem("token", data.token);
       setAdmin({ role: data.role, token: data.token });
       setToken(data.token);
       return { success: true, message: data.message };
     } catch (err) {
+        console.log("Login error:", err.response?.data);
       return {
         success: false,
         message: err.response?.data?.message || err.message,

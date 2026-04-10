@@ -1,5 +1,5 @@
 // pages/VerifyEmail.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -8,8 +8,11 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
   const token = searchParams.get("token");
 
-  const [status, setStatus] = useState("loading"); 
+  const [status, setStatus] = useState("loading");
   const [message, setMessage] = useState("");
+
+  // 🔒 prevents double updates
+  const handledRef = useRef(false);
 
   useEffect(() => {
     if (!token) {
@@ -19,23 +22,30 @@ const VerifyEmail = () => {
     }
 
     const verify = async () => {
+      if(handledRef.current)return;
+      handledRef.current = true;
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/auth/verify-email?token=${token}`
+          `http://localhost:5000/api/auth/verify-email?token=${token}`,
         );
         setStatus("success");
         setMessage(res.data.message);
+       setTimeout(() => {
+          navigate("/login", { replace: true });
+        }, 1500);
       } catch (err) {
+        if (handledRef.current) return;
+
         setStatus("error");
         setMessage(err.response?.data?.message || "Verification failed.");
       }
     };
 
     verify();
-  }, [token]);
+  }, [token, navigate]);
 
   return (
-    <div className="min-h-screen bg-navy flex items-center justify-center">
+   <div className="min-h-screen bg-navy flex items-center justify-center">
       <div className="w-full max-w-md px-6 py-8 bg-navy-card border-navy-border rounded-lg text-center">
 
         {status === "loading" && (
@@ -48,7 +58,9 @@ const VerifyEmail = () => {
         {status === "success" && (
           <>
             <div className="text-green-400 text-5xl mb-4">✓</div>
-            <h1 className="text-text-base text-xl font-semibold mb-2">Email Verified!</h1>
+            <h1 className="text-text-base text-xl font-semibold mb-2">
+              Email Verified!
+            </h1>
             <p className="text-text-muted mb-6">{message}</p>
             <button
               onClick={() => navigate("/login")}
@@ -62,10 +74,12 @@ const VerifyEmail = () => {
         {status === "error" && (
           <>
             <div className="text-red-400 text-5xl mb-4">✕</div>
-            <h1 className="text-text-base text-xl font-semibold mb-2">Verification Failed</h1>
+            <h1 className="text-text-base text-xl font-semibold mb-2">
+              Verification Failed
+            </h1>
             <p className="text-text-muted mb-6">{message}</p>
             <button
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/register")}
               className="bg-gold hover:bg-gold/90 text-black px-6 py-2 rounded"
             >
               Back to Register
@@ -79,3 +93,4 @@ const VerifyEmail = () => {
 };
 
 export default VerifyEmail;
+

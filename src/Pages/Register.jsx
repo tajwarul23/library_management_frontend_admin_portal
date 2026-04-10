@@ -6,6 +6,8 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import {z} from "zod";
 import { AuthContext } from "@/Context/AppContext";
+import { toast } from "react-toastify";
+
 
 //registration schema
 const registerSchema = z.object({
@@ -38,16 +40,25 @@ const Register = () => {
   //handle submit
   const onSubmit = async(data) =>{
     console.log(data);
+    const toastId = toast.loading("Creating account...");
     
     //simulate api
     const {name, email, password} = data;
     const result = await registerAdmin(name, email, password)
     
     if(result.success === true){
-      navigate("/login")
+      toast.update(toastId, {
+        render:"Registration Successful! Check your email",
+        type:"success",
+        isLoading: false,
+        autoClose:3000
+      })
+      navigate("/verify-notice")
     }
     else{
-      
+      toast.update(toastId,{
+        render:result.message, type:"error", isLoading:false, autoClose:3000
+      })
     //reset the form
     reset()
     }

@@ -4,8 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import {z} from "zod";
+import { z} from "zod";
 import { AuthContext } from "@/Context/AppContext";
+import { toast } from "react-toastify";
 
 //registration schema
 const loginSchema = z.object({
@@ -37,12 +38,24 @@ const Login = () => {
     
     //simulate api
     const { email, password} = data;
+    const toastId = toast.loading("logging into your account")
     const result = await loginAdmin(email, password);
     if(result.success === true){
-      navigate("/*")
+      toast.update(toastId, {
+        render:"Login Successful!",
+        type:"success",
+        isLoading: false,
+        autoClose:3000
+      })
+      navigate("/admin-layout")
     }
     else{
-      
+       toast.update(toastId, {
+        render:result.message,
+        type:"error",
+        isLoading: false,
+        autoClose:3000
+      })
     //reset the form
     reset()
     }
