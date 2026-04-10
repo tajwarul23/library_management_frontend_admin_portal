@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+body{
+  background-color: #0D1117
+}
 @custom-variant dark (&:is(.dark *));
 @theme {
   /* Primary — Gold */
