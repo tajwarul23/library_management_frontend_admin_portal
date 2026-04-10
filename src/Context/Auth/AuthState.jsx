@@ -9,16 +9,21 @@ const AuthState = ({ children }) => {
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [token, setToken] = useState();
+  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   //-------------------USE_EFFECT----------------------------------
-  useEffect(() => {
+useEffect(() => {
   const storedToken = localStorage.getItem("token");
-
+  console.log("1. storedToken on mount:", storedToken);
   if (storedToken) {
     setToken(storedToken);
-    setAdmin({ token: storedToken }); // temporary until getProfile
-    getProfile(); // fetch real user
+    getProfile().then((res) => {
+      console.log("2. getProfile result:", res);
+        setIsInitializing(false);
+    })
+  } else {
+    setIsInitializing(false);
   }
 }, []);
 
@@ -46,6 +51,7 @@ const AuthState = ({ children }) => {
   };
 
   // ── Login ─────────────────────────────────────────────
+
   const loginAdmin = async (email, password) => {
     try {
       setLoading(true);
@@ -54,14 +60,13 @@ const AuthState = ({ children }) => {
         { email, password },
         { withCredentials: true },
       );
-      console.log("Login Response", data);
-      
+
       localStorage.setItem("token", data.token);
       setAdmin({ role: data.role, token: data.token });
+      console.log("LOGIN RESPONSE:", data);
       setToken(data.token);
       return { success: true, message: data.message };
     } catch (err) {
-        console.log("Login error:", err.response?.data);
       return {
         success: false,
         message: err.response?.data?.message || err.message,
@@ -75,6 +80,7 @@ const AuthState = ({ children }) => {
   const logoutAdmin = () => {
     localStorage.removeItem("token");
     setAdmin(null);
+    setToken(null); // ← fix 2: also clear token state
   };
 
   // ── Forgot Password ───────────────────────────────────
@@ -115,26 +121,30 @@ const AuthState = ({ children }) => {
   };
 
   // ── Get Profile ───────────────────────────────────────
-  const getProfile = async () => {
-    try {
-      setLoading(true);
-      const { data } = await axios.get(`${BASE}/user/profile`, {
-        headers: {
-          Auth: localStorage.getItem("token"),
-        },
-        withCredentials: true,
-      });
-      setAdmin(data.user);
-      return { success: true };
-    } catch (err) {
-      return {
-        success: false,
-        message: err.response?.data?.message || err.message,
-      };
-    } finally {
-      setLoading(false);
+const getProfile = async () => {
+  try {
+    setLoading(true);
+    const storedToken = localStorage.getItem("token");
+    console.log("3. getProfile token:", storedToken);
+    const { data } = await axios.get(`${BASE}/user/profile`, {
+      headers: { Auth: storedToken },
+      withCredentials: true,
+    });
+    console.log("4. getProfile data:", data);
+    setAdmin(data.data);
+    return { success: true };
+  } catch (err) {
+    console.log("5. getProfile error:", err.response?.status, err.response?.data);
+    if (err.response?.status === 401) {
+      localStorage.removeItem("token");
+      setToken(null);
+      setAdmin(null);
     }
-  };
+    return { success: false };
+  } finally {
+    setLoading(false);
+  }
+};
 
   // ── Update Profile ────────────────────────────────────
   const updateProfile = async (updates) => {
@@ -171,6 +181,7 @@ const AuthState = ({ children }) => {
         resetPassword,
         getProfile,
         updateProfile,
+        isInitializing
       }}
     >
       {children}

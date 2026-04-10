@@ -1,42 +1,57 @@
 import { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Topbar from "@/components/Topbar";
-import Dashboard from "@/pages/Dashboard";
-import ManageBooks from "@/pages/ManageBooks";
-import ManageStudents from "@/pages/ManageStudents";
-import Reservations from "@/pages/Reservations";
-import IssuedBooks from "@/pages/IssuedBooks";
-// import ReturnBook from "@/pages/ReturnBook";
+import Dashboard from "@/Pages/Dashboard";
+import ManageBooks from "@/Pages/ManageBooks";
+import ManageStudents from "@/Pages/ManageStudents";
+import Reservations from "@/Pages/Reservations";
+import IssuedBooks from "@/Pages/IssuedBooks";
+// import ReturnBook from "@/Pages/ReturnBook";
 import ReturnBook from "@/Pages/ReturnBooks";
-import SessionWise from "@/pages/SessionWise";
-// import DepartmentWise from "@/pages/DepartmentWise";
+import SessionWise from "@/Pages/SessionWise";
+// import DepartmentWise from "@/Pages/DepartmentWise";
 import DepartmentWise from "@/Pages/DeparmentWise";
 
-const pages = {
-  dashboard:   { label: "Dashboard",        component: <Dashboard /> },
-  books:       { label: "Manage Books",     component: <ManageBooks /> },
-  students:    { label: "Manage Students",  component: <ManageStudents /> },
-  reservations:{ label: "Reservations",     component: <Reservations /> },
-  issued:      { label: "Issued Books",     component: <IssuedBooks /> },
-  return:      { label: "Return Book",      component: <ReturnBook /> },
-  session:     { label: "Session Wise",     component: <SessionWise /> },
-  department:  { label: "Department Wise",  component: <DepartmentWise /> },
-};
 
 const AdminLayout = () => {
   const [activePage, setActivePage] = useState("dashboard");
+  console.log("activePage:", activePage)
+
+  const renderPage = () => {
+    switch (activePage) {
+      case "dashboard":    return <Dashboard />;
+      case "books":        return <ManageBooks />;
+      case "students":     return <ManageStudents />;
+      case "reservations": return <Reservations />;
+      case "issued":       return <IssuedBooks />;
+      case "return":       return <ReturnBook />;
+      case "session":      return <SessionWise />;
+      case "department":   return <DepartmentWise />;
+      default:             return <Dashboard />;
+    }
+  };
+
+ const pageTitles = {
+  dashboard:    { label: "Dashboard" },
+  books:        { label: "Manage Books" },
+  students:     { label: "Manage Students" },
+  reservations: { label: "Reservations" },
+  issued:       { label: "Issued Books" },
+  return:       { label: "Return Book" },
+  session:      { label: "Session Wise" },
+  department:   { label: "Department Wise" },
+};
 
   return (
     <div className="flex h-screen bg-navy text-white overflow-hidden">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} pages={pages} />
+      <Sidebar activePage={activePage} setActivePage={setActivePage} pages={pageTitles} />
       <div className="flex flex-col flex-1 overflow-hidden">
-        <Topbar title={pages[activePage].label} />
+        <Topbar title={pageTitles[activePage].label} />
         <main className="flex-1 overflow-y-auto p-5">
-          {pages[activePage].component}
+          {renderPage()} {/* ← renders fresh each time */}
         </main>
       </div>
     </div>
   );
 };
-
-export default AdminLayout;
+export default AdminLayout

@@ -3,10 +3,10 @@ import { Navigate, Outlet } from "react-router-dom";
 import { AuthContext } from "@/Context/AppContext";
 
 const ProtectedRoute = () => {
-  const { admin, loading } = useContext(AuthContext);
+  const { admin,  isInitializing } = useContext(AuthContext);
 
-  // optional loading state
-  if (loading) {
+  // wait until auth state is restored from localStorage
+  if (isInitializing) {
     return (
       <div className="min-h-screen flex items-center justify-center text-white">
         Loading...
@@ -14,12 +14,10 @@ const ProtectedRoute = () => {
     );
   }
 
-  // not logged in → redirect
   if (!admin) {
     return <Navigate to="/login" replace />;
   }
 
-  // logged in → allow access
   return <Outlet />;
 };
 

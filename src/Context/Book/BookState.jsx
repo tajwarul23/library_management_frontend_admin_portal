@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { BookContext } from "../AppContext";
 
 const BASE = "http://localhost:5000/api";
 
 const authHeaders = () => ({
-   headers: {
-          Auth: localStorage.getItem("token"),
-        },
+  headers: {
+    Auth: localStorage.getItem("token"),
+  },
   withCredentials: true,
 });
 
@@ -21,11 +21,18 @@ const BookState = ({ children }) => {
   const addBook = async (bookData) => {
     try {
       setLoading(true);
-      const { data } = await axios.post(`${BASE}/admin/book/add`, bookData, authHeaders());
+      const { data } = await axios.post(
+        `${BASE}/admin/addBook`,
+        bookData,
+        authHeaders(),
+      );
       setBooks((prev) => [...prev, data.book]);
       return { success: true, message: data.message };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -35,11 +42,18 @@ const BookState = ({ children }) => {
   const updateBook = async (bookId, updates) => {
     try {
       setLoading(true);
-      const { data } = await axios.put(`${BASE}/admin/book/update/${bookId}`, updates, authHeaders());
+      const { data } = await axios.put(
+        `${BASE}/admin/book/update/${bookId}`,
+        updates,
+        authHeaders(),
+      );
       setBooks((prev) => prev.map((b) => (b._id === bookId ? data.book : b)));
       return { success: true, message: data.message };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -49,11 +63,17 @@ const BookState = ({ children }) => {
   const deleteBook = async (bookId) => {
     try {
       setLoading(true);
-      const { data } = await axios.delete(`${BASE}/admin/book/delete/${bookId}`, authHeaders());
+      const { data } = await axios.delete(
+        `${BASE}/admin/book/delete/${bookId}`,
+        authHeaders(),
+      );
       setBooks((prev) => prev.filter((b) => b._id !== bookId));
       return { success: true, message: data.message };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -63,11 +83,17 @@ const BookState = ({ children }) => {
   const getBookDetails = async (bookId) => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${BASE}/admin/book/${bookId}`, authHeaders());
+      const { data } = await axios.get(
+        `${BASE}/admin/book/${bookId}`,
+        authHeaders(),
+      );
       setBookDetails(data.book);
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -77,11 +103,20 @@ const BookState = ({ children }) => {
   const searchBooks = async (query) => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${BASE}/admin/book/search?q=${query}`, authHeaders());
-      setBooks(data.books);
+      console.log("searching for:", query);
+      const { data } = await axios.get(
+        `${BASE}/admin/books/search?query=${query}`,
+        authHeaders(),
+      );
+      console.log("search response:", data);
+      setBooks(data.data);
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+        console.log("search error:", err.response?.status, err.response?.data);
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -91,13 +126,17 @@ const BookState = ({ children }) => {
   const issueBook = async (bookId, studentId, reservationId) => {
     try {
       setLoading(true);
-      const { data } = await axios.post(`${BASE}/admin/book/issue`,
+      const { data } = await axios.post(
+        `${BASE}/admin/book/issue`,
         { bookId, studentId, reservationId },
-        authHeaders()
+        authHeaders(),
       );
       return { success: true, message: data.message };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -107,13 +146,17 @@ const BookState = ({ children }) => {
   const returnBook = async (issueId) => {
     try {
       setLoading(true);
-      const { data } = await axios.post(`${BASE}/admin/book/return`,
+      const { data } = await axios.post(
+        `${BASE}/admin/book/return`,
         { issueId },
-        authHeaders()
+        authHeaders(),
       );
       return { success: true, message: data.message };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
@@ -123,23 +166,65 @@ const BookState = ({ children }) => {
   const getAllIssuedBooks = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${BASE}/admin/book/issued/all`, authHeaders());
+      const { data } = await axios.get(
+        `${BASE}/admin/book/issued/all`,
+        authHeaders(),
+      );
       setIssuedBooks(data.issuedBooks);
       return { success: true };
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || err.message };
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  //----Get all book----
+  const getAllBooks = async () => {
+    try {
+      
+      const token = localStorage.getItem("token");
+      console.log("getAllBooks fired, token:", token);
+      const { data } = await axios.get(`${BASE}/admin/book/all`, authHeaders());
+
+      console.log("BOOKS API RESPONSE:", data);
+
+      setBooks(data.books);
+
+      return { success: true };
+    } catch (err) {
+      console.log("GET ALL BOOKS ERROR:", err.response?.data || err.message);
+
+      return {
+        success: false,
+        message: err.response?.data?.message || err.message,
+      };
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <BookContext.Provider value={{
-      books, bookDetails, issuedBooks, loading,
-      addBook, updateBook, deleteBook,
-      getBookDetails, searchBooks,
-      issueBook, returnBook, getAllIssuedBooks,
-    }}>
+    <BookContext.Provider
+      value={{
+        books,
+        bookDetails,
+        issuedBooks,
+        loading,
+        addBook,
+        updateBook,
+        deleteBook,
+        getBookDetails,
+        searchBooks,
+        issueBook,
+        returnBook,
+        getAllIssuedBooks,
+        getAllBooks,
+      }}
+    >
       {children}
     </BookContext.Provider>
   );
